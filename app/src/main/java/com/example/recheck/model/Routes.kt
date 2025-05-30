@@ -6,4 +6,5 @@ sealed class Routes(val route: String) {
     data object Mypage : Routes("Mypage")
     data object Register : Routes("Register")
     data object Init : Routes("Init")
+    data object AddFood : Routes("AddFood")
 }
