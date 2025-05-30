@@ -4,14 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.recheck.roomDB.FoodDAO
 
 @Database(
-    entities = [UserEntity::class],
-    version = 2,
+    entities = [UserEntity::class, FoodEntity::class],
+    version = 3,
     exportSchema = true
 )
 abstract class RecheckDatabase : RoomDatabase() {
     abstract fun getUserDao(): UserDAO
+    abstract fun getFoodDao(): FoodDAO
 
     companion object {
         @Volatile
