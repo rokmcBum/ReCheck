@@ -2,74 +2,79 @@ package com.example.recheck.navGraph
 
 import AddFoodScreen
 import RegisterScreen
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.example.recheck.calendar.ui.CalendarScreen
 import com.example.recheck.model.Routes
 import com.example.recheck.uicomponent.InitScreen
 import com.example.recheck.uicomponent.LoginScreen
 import com.example.recheck.uicomponent.MyPageScreen
-import com.example.recheck.viewmodel.FoodRepository
 import com.example.recheck.viewmodel.FoodViewModel
-import com.example.recheck.viewmodel.FoodViewModelFactory
-import com.example.week12.roomDB.RecheckDatabase
-import com.example.week12.viewmodel.UserRepository
 import com.example.week12.viewmodel.UserViewModel
-import com.example.week12.viewmodel.UserViewModelFactory
+import androidx.compose.runtime.getValue
 
-
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun RecheckApp() {
-    val context = LocalContext.current
-    val db = RecheckDatabase.getDBInstance(context)
-    val userRepo = UserRepository(db)
-    val foodRepo = FoodRepository(db)
-    val userViewModel: UserViewModel = viewModel(factory = UserViewModelFactory(userRepo))
-    val foodViewModel: FoodViewModel = viewModel(factory = FoodViewModelFactory(foodRepo))
-
-    NavGraph(userViewModel = userViewModel, foodViewModel = foodViewModel)
-}
-
-@Composable
-fun NavGraph(userViewModel: UserViewModel, foodViewModel: FoodViewModel) {
-    val navController = rememberNavController()
+fun NavGraph(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    foodViewModel: FoodViewModel,
+    onGoogleSignIn: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     NavHost(
-        navController = navController,
-        startDestination = Routes.Init.route
+        navController    = navController,
+        startDestination = Routes.Init.route,
+        modifier         = modifier
     ) {
-//        composable(Routes.Main.route) {
-//            if (userViewModel.isUserLoggedIn()) {
-//                navController.navigate(Routes.Mypage.route) {
-//                    popUpTo(Routes.Main.route) { inclusive = true }
-//                }
-//            } else {
-//                LoginScreen(userViewModel = userViewModel, navController = navController)
-//            }
-//        }
-        composable(Routes.Mypage.route) {
-            MyPageScreen(
-                userViewModel = userViewModel,
-                foodViewModel = foodViewModel,
-                navController = navController
+        composable(Routes.Init.route) {
+            InitScreen(navController)
+        }
+        composable(Routes.Login.route) {
+            // ① 로그인 상태 구독
+            val user by userViewModel.user.collectAsState()
+            // ② 로그인 되어 있으면 바로 MyPage로
+            LaunchedEffect(user) {
+                if (user.id != 0) {
+                    navController.navigate(Routes.Mypage.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                }
+            }
+            // ③ 아니면 로그인 화면
+            LoginScreen(
+                userViewModel  = userViewModel,
+                navController  = navController,
+                onGoogleSignIn = onGoogleSignIn
             )
         }
         composable(Routes.Register.route) {
             RegisterScreen(userViewModel = userViewModel, navController = navController)
         }
-        composable(Routes.Login.route) {
-            LoginScreen(userViewModel = userViewModel, navController = navController)
+        composable(Routes.Main.route) {
+            InitScreen(navController)
         }
-        composable(Routes.Init.route) {
-            InitScreen(navController = navController)
+        composable(Routes.Calendar.route) {
+            CalendarScreen(currentUserId = userViewModel.user.value.id)
         }
         composable(Routes.AddFood.route) {
             AddFoodScreen(
-                userViewModel = userViewModel,
-                foodViewModel = foodViewModel,
-                navController = navController
+                userViewModel  = userViewModel,
+                foodViewModel  = foodViewModel,
+                navController  = navController
+            )
+        }
+        composable(Routes.Mypage.route) {
+            MyPageScreen(
+                userViewModel  = userViewModel,
+                foodViewModel  = foodViewModel,
+                navController  = navController
             )
         }
     }

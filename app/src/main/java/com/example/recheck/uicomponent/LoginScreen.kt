@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun LoginScreen(userViewModel: UserViewModel, navController: NavController) {
+fun LoginScreen(userViewModel: UserViewModel, navController: NavController, onGoogleSignIn: () -> Unit ) {
     val user by userViewModel.user.collectAsState()
 
     var email by remember { mutableStateOf("") }
@@ -108,6 +108,10 @@ fun LoginScreen(userViewModel: UserViewModel, navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
+                GoogleSignInButton(onClick = onGoogleSignIn)
+
+                Spacer(modifier = Modifier.height(24.dp))
 
                 TextButton(onClick = { navController.navigate(Routes.Register.route) }) {
                     Text("회원가입")
