@@ -14,7 +14,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReCheckTheme {
                 RecheckApp()
-                // CalendarScreen(currentUserId = 1)
             }
         }
     }
