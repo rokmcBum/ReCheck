@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,8 +17,7 @@ import com.example.recheck.uicomponent.InitScreen
 import com.example.recheck.uicomponent.LoginScreen
 import com.example.recheck.uicomponent.MyPageScreen
 import com.example.recheck.viewmodel.FoodViewModel
-import com.example.week12.viewmodel.UserViewModel
-import androidx.compose.runtime.getValue
+import com.example.recheck.viewmodel.UserViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -29,9 +29,9 @@ fun NavGraph(
     modifier: Modifier = Modifier
 ) {
     NavHost(
-        navController    = navController,
+        navController = navController,
         startDestination = Routes.Init.route,
-        modifier         = modifier
+        modifier = modifier
     ) {
         composable(Routes.Init.route) {
             InitScreen(navController)
@@ -49,8 +49,8 @@ fun NavGraph(
             }
             // ③ 아니면 로그인 화면
             LoginScreen(
-                userViewModel  = userViewModel,
-                navController  = navController,
+                userViewModel = userViewModel,
+                navController = navController,
                 onGoogleSignIn = onGoogleSignIn
             )
         }
@@ -65,16 +65,16 @@ fun NavGraph(
         }
         composable(Routes.AddFood.route) {
             AddFoodScreen(
-                userViewModel  = userViewModel,
-                foodViewModel  = foodViewModel,
-                navController  = navController
+                userViewModel = userViewModel,
+                foodViewModel = foodViewModel,
+                navController = navController
             )
         }
         composable(Routes.Mypage.route) {
             MyPageScreen(
-                userViewModel  = userViewModel,
-                foodViewModel  = foodViewModel,
-                navController  = navController
+                userViewModel = userViewModel,
+                foodViewModel = foodViewModel,
+                navController = navController
             )
         }
     }

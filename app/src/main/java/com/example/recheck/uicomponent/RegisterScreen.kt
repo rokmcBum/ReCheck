@@ -23,8 +23,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
-import com.example.week12.roomDB.UserEntity
-import com.example.week12.viewmodel.UserViewModel
+import com.example.recheck.roomDB.UserEntity
+import com.example.recheck.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable

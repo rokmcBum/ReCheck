@@ -31,12 +31,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
-import com.example.week12.viewmodel.UserViewModel
+import com.example.recheck.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun LoginScreen(userViewModel: UserViewModel, navController: NavController, onGoogleSignIn: () -> Unit ) {
+fun LoginScreen(
+    userViewModel: UserViewModel,
+    navController: NavController,
+    onGoogleSignIn: () -> Unit
+) {
     val user by userViewModel.user.collectAsState()
 
     var email by remember { mutableStateOf("") }

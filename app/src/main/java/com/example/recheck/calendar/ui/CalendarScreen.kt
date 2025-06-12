@@ -1,12 +1,19 @@
 package com.example.recheck.calendar.ui
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,9 +26,8 @@ import com.example.recheck.calendar.domain.FoodItem
 import com.example.recheck.calendar.viewmodel.CalendarViewModel
 import com.example.recheck.calendar.viewmodel.CalendarViewModelFactory
 import com.example.recheck.roomDB.FoodDAO
-import com.example.week12.roomDB.RecheckDatabase
+import com.example.recheck.roomDB.RecheckDatabase
 import java.time.format.DateTimeFormatter
-import androidx.compose.runtime.getValue
 
 @Composable
 fun CalendarScreen(
@@ -36,7 +42,7 @@ fun CalendarScreen(
 
     // 1) 싱글톤 DB 인스턴스에서 DAO 가져오기
     val db: RecheckDatabase = RecheckDatabase.getDBInstance(context)
-    val foodDao: FoodDAO    = remember { db.getFoodDao() }
+    val foodDao: FoodDAO = remember { db.getFoodDao() }
 
     // 2) Retrofit CalendarApiService 생성 (Interceptor 로 토큰 주입)
     val apiService = remember(token) { CalendarApiClient.create(token) }
@@ -61,7 +67,9 @@ fun CalendarScreen(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             return@Box
         }
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
             Text(
                 text = "캘린더",
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
@@ -70,8 +78,8 @@ fun CalendarScreen(
 
             // A) 달력: 로컬 만료일 + 원격 일정 점 찍기
             CalendarComposable(
-                markedDates   = uiState.markedDates,
-                events         = uiState.remoteEvents,
+                markedDates = uiState.markedDates,
+                events = uiState.remoteEvents,
                 onDateSelected = { date -> vm.onDateSelected(date) }
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,7 +99,7 @@ fun CalendarScreen(
             } else {
                 foods.forEach { item ->
                     Text(
-                        text     = "- ${item.name}",
+                        text = "- ${item.name}",
                         modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
                     )
                 }
@@ -105,9 +113,9 @@ fun CalendarScreen(
             } else {
                 evts.forEach { ev ->
                     val t0 = ev.start.toLocalTime().toString().take(5)
-                    val t1 = ev.end  .toLocalTime().toString().take(5)
+                    val t1 = ev.end.toLocalTime().toString().take(5)
                     Text(
-                        text     = "- ${ev.title} ($t0~$t1)",
+                        text = "- ${ev.title} ($t0~$t1)",
                         modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
                     )
                 }
@@ -117,8 +125,8 @@ fun CalendarScreen(
         // E) 에러 메시지
         uiState.errorMessage?.let { err ->
             Text(
-                text     = err,
-                color    = androidx.compose.ui.graphics.Color.Red,
+                text = err,
+                color = androidx.compose.ui.graphics.Color.Red,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)

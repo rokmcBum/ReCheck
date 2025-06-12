@@ -1,10 +1,9 @@
-package com.example.week12.roomDB
+package com.example.recheck.roomDB
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.recheck.roomDB.FoodDAO
 
 @Database(
     entities = [UserEntity::class, FoodEntity::class],

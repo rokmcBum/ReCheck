@@ -33,9 +33,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
+import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.viewmodel.FoodViewModel
-import com.example.week12.roomDB.FoodEntity
-import com.example.week12.viewmodel.UserViewModel
+import com.example.recheck.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

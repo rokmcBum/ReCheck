@@ -1,7 +1,7 @@
-package com.example.week12.viewmodel
+package com.example.recheck.viewmodel
 
-import com.example.week12.roomDB.RecheckDatabase
-import com.example.week12.roomDB.UserEntity
+import com.example.recheck.roomDB.RecheckDatabase
+import com.example.recheck.roomDB.UserEntity
 
 class UserRepository(private val db: RecheckDatabase) {
     val dao = db.getUserDao()
