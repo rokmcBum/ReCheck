@@ -18,6 +18,7 @@ import com.example.recheck.uicomponent.MyPageScreen
 import com.example.recheck.viewmodel.FoodViewModel
 import com.example.week12.viewmodel.UserViewModel
 import androidx.compose.runtime.getValue
+import com.example.recheck.uicomponent.permissions.NotificationSettingsScreen
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -61,7 +62,10 @@ fun NavGraph(
             InitScreen(navController)
         }
         composable(Routes.Calendar.route) {
-            CalendarScreen(currentUserId = userViewModel.user.value.id)
+            CalendarScreen(
+                currentUserId = userViewModel.user.value.id,
+                navController = navController
+            )
         }
         composable(Routes.AddFood.route) {
             AddFoodScreen(
@@ -76,6 +80,9 @@ fun NavGraph(
                 foodViewModel  = foodViewModel,
                 navController  = navController
             )
+        }
+        composable(Routes.Notification.route) {
+            NotificationSettingsScreen(navController)
         }
     }
 }

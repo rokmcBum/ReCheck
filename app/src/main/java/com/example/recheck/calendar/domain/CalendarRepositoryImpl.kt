@@ -28,14 +28,11 @@ class CalendarRepositoryImpl(
         end: LocalDate
     ): List<FoodItem> = withContext(Dispatchers.IO) {
         foodDao.getMyFoods(userId)
-            .mapNotNull { entity ->
-                runCatching {
-                    val d = LocalDate.parse(entity.expirationDate, dateFormatter)
-                    Pair(entity, d)
-                }.getOrNull()
+        .map { it.toDomainModel() }
+        .filter { item ->
+                // start ≤ item.expirationDate ≤ end
+                !item.expirationDate.isBefore(start) && !item.expirationDate.isAfter(end)
             }
-            .filter { (_, d) -> !d.isBefore(start) && !d.isAfter(end) }
-            .map { (entity, _) -> entity.toDomainModel() }
     }
 
     override suspend fun fetchRemoteCalendarEvents(

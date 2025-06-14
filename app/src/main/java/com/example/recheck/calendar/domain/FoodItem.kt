@@ -1,8 +1,6 @@
 package com.example.recheck.calendar.domain
 
-import com.example.week12.roomDB.FoodEntity
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * 도메인 레이어(앱 비즈니스 로직 & UI)에서 사용하는 순수 모델

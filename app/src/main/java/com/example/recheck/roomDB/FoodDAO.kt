@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.week12.roomDB.FoodEntity
+import java.time.LocalDate
 
 @Dao
 interface FoodDAO {
@@ -19,4 +19,7 @@ interface FoodDAO {
 
     @Query("SELECT * FROM FoodTable WHERE userId = :userId")
     suspend fun getMyFoods(userId: Int): List<FoodEntity>
+
+    @Query("SELECT * FROM FoodTable WHERE expirationDate = :date")
+    suspend fun findItemsByExpirationDate(date: LocalDate): List<FoodEntity>
 }

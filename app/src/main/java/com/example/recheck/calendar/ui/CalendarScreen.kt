@@ -3,7 +3,10 @@ package com.example.recheck.calendar.ui
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -22,10 +25,19 @@ import com.example.recheck.roomDB.FoodDAO
 import com.example.week12.roomDB.RecheckDatabase
 import java.time.format.DateTimeFormatter
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import com.example.recheck.R
+import com.example.recheck.model.Routes
+import com.example.recheck.notifications.NotificationScheduler
+import java.time.LocalDate
 
 @Composable
 fun CalendarScreen(
     currentUserId: Int,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -41,17 +53,29 @@ fun CalendarScreen(
     // 2) Retrofit CalendarApiService 생성 (Interceptor 로 토큰 주입)
     val apiService = remember(token) { CalendarApiClient.create(token) }
 
-    // 3) Repository + ViewModel 초기화
+    // 3) Repository + ViewModel 초기화 (하나만)
     val repository = remember(token) { CalendarRepositoryImpl(foodDao, apiService) }
-    val vm: CalendarViewModel = viewModel(
-        factory = CalendarViewModelFactory(repository, currentUserId)
-    )
-
     val calendarViewModel: CalendarViewModel = viewModel(
-        factory = CalendarViewModelFactory(repository, currentUserId)
-    )
+            factory = CalendarViewModelFactory(repository, currentUserId)
+                )
 
-    val uiState by vm.uiState.collectAsState()
+    // ── ① 현재 보고 있는 월(1일 기준) 상태
+    var currentMonth by rememberSaveable {
+            mutableStateOf(LocalDate.now().withDayOfMonth(1))
+        }
+
+    // ② 달이 바뀔 때 실행할 콜백
+    val onMonthChanged: (LocalDate) -> Unit = { newMonth ->
+        currentMonth = newMonth
+        // ViewModel 에 해당 월 이벤트 다시 불러오기
+        calendarViewModel.loadEventsForMonth(newMonth)
+    }
+
+    val uiState by calendarViewModel.uiState.collectAsState()
+
+    LaunchedEffect(currentMonth) {
+        calendarViewModel.loadEventsForMonth(currentMonth)
+    }
 
     // 6) 날짜 포맷터 준비
     val formatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
@@ -62,18 +86,36 @@ fun CalendarScreen(
             return@Box
         }
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text(
-                text = "캘린더",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "캘린더",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                IconButton(onClick = { navController.navigate(Routes.Notification.route) }) {
+                    Icon(
+                        painter           = painterResource(id = R.drawable.baseline_notifications_none_24),
+                        contentDescription = "알림 설정",
+                        tint               = Color(0xFF656565)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             // A) 달력: 로컬 만료일 + 원격 일정 점 찍기
             CalendarComposable(
-                markedDates   = uiState.markedDates,
+                currentMonth   = currentMonth,
+                onMonthChanged = onMonthChanged,
+                markedDates    = uiState.markedDates,
                 events         = uiState.remoteEvents,
-                onDateSelected = { date -> vm.onDateSelected(date) }
-            )
+                selectedDate   = uiState.selectedDate,
+                onDateSelected = calendarViewModel::onDateSelected,
+                mainColor      = Color(0xFFFF5D5D)
+                        )
             Spacer(modifier = Modifier.height(16.dp))
 
             // B) 선택된 날짜
@@ -87,7 +129,7 @@ fun CalendarScreen(
             // C) 만료 식재료 리스트
             val foods: List<FoodItem> = uiState.itemsByDate[sel].orEmpty()
             if (foods.isEmpty()) {
-                Text("- 만료 식재료 없음", modifier = Modifier.padding(start = 8.dp))
+                Text("소비기한이 끝나는 식재료가 없어요.", modifier = Modifier.padding(start = 8.dp))
             } else {
                 foods.forEach { item ->
                     Text(
@@ -101,7 +143,7 @@ fun CalendarScreen(
             // D) 원격 일정 리스트
             val evts = uiState.remoteEvents.filter { it.start.toLocalDate() == sel }
             if (evts.isEmpty()) {
-                Text("- 일정 없음", modifier = Modifier.padding(start = 8.dp))
+                Text("일정이 없어요.", modifier = Modifier.padding(start = 8.dp))
             } else {
                 evts.forEach { ev ->
                     val t0 = ev.start.toLocalTime().toString().take(5)
@@ -111,6 +153,11 @@ fun CalendarScreen(
                         modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
                     )
                 }
+            }
+
+            // 푸시알림 테스트
+            Button(onClick = { NotificationScheduler.scheduleImmediateCheck(context) }) {
+                Text("만료 알림 테스트")
             }
         }
 

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.recheck.navGraph.RecheckApp
 import com.example.recheck.ui.theme.ReCheckTheme
+import com.example.recheck.uicomponent.permissions.RequestNotificationPermissionIfNeeded
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,6 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReCheckTheme {
+                RequestNotificationPermissionIfNeeded()
                 RecheckApp()
             }
         }

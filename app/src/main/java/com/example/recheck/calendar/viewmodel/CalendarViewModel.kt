@@ -6,6 +6,7 @@ import com.example.recheck.calendar.domain.FoodItem
 import com.example.recheck.calendar.domain.CalendarRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.collections.map
@@ -59,5 +60,37 @@ class CalendarViewModel(
 
     fun onDateSelected(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
+    }
+
+    fun loadEventsForMonth(month: LocalDate) {
+        viewModelScope.launch {
+            // 로딩 표시
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            try {
+                // 월의 1일과 마지막 날 계산
+                val startOfMonth = month.withDayOfMonth(1)
+                val endOfMonth   = month.withDayOfMonth(month.lengthOfMonth())
+
+                // Repository에서 해당 월 이벤트만 가져오기
+                val events = repository.fetchRemoteCalendarEvents(startOfMonth, endOfMonth)
+
+                // 상태에 반영
+                _uiState.update {
+                    it.copy(
+                        remoteEvents = events,
+                        isLoading    = false
+                    )
+                }
+            } catch (e: Exception) {
+                // 에러 처리
+                _uiState.update {
+                    it.copy(
+                        errorMessage = e.localizedMessage ?: "이벤트 로드 실패",
+                        isLoading    = false
+                    )
+                }
+            }
+        }
     }
 }

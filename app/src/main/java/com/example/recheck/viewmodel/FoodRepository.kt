@@ -1,6 +1,6 @@
 package com.example.recheck.viewmodel
 
-import com.example.week12.roomDB.FoodEntity
+import com.example.recheck.roomDB.FoodEntity
 import com.example.week12.roomDB.RecheckDatabase
 
 class FoodRepository(private val db: RecheckDatabase) {
