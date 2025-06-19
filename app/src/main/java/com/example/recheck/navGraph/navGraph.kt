@@ -1,6 +1,7 @@
 package com.example.recheck.navGraph
 
 import AddFoodScreen
+import LoginScreen
 import RegisterScreen
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
@@ -14,7 +15,6 @@ import androidx.navigation.compose.composable
 import com.example.recheck.calendar.ui.CalendarScreen
 import com.example.recheck.model.Routes
 import com.example.recheck.uicomponent.InitScreen
-import com.example.recheck.uicomponent.LoginScreen
 import com.example.recheck.uicomponent.MyPageScreen
 import com.example.recheck.uicomponent.WelcomeScreen
 import com.example.recheck.viewmodel.FoodViewModel
