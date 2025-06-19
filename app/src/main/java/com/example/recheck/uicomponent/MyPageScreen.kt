@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -174,17 +175,20 @@ fun MyPageScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            if (dday > 0) {
+                            Row {
+                                if (dday > 0) {
+                                    Text(
+                                        text = "D-${dday}",
+                                        color = Color(0xFFFF5D5D),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(5.dp))
                                 Text(
-                                    text = "D-${dday}",
-                                    color = Color(0xFFFF5D5D),
-                                    fontWeight = FontWeight.SemiBold
+                                    text = food.name,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
-                            Text(
-                                text = food.name,
-                                fontWeight = FontWeight.Bold
-                            )
                             Text(
                                 text = "${food.expirationDate} 까지",
                                 color = Color.Gray
