@@ -1,6 +1,5 @@
 package com.example.recheck.calendar.domain
 
-import com.example.recheck.calendar.data.CalendarListEntryDto
 import java.time.LocalDate
 
 /**
@@ -12,9 +11,4 @@ interface CalendarRepository {
 
     // 로컬 DB에서 해당 사용자의 기간 내 만료 식재료 가져오기
     suspend fun getExpiryItemsBetween(userId: Int, start: LocalDate, end: LocalDate): List<FoodItem>
-
-    // 원격 캘린더 API에서 해당 사용자의 일정 가져오기 (from~to 기간)
-    suspend fun fetchRemoteCalendarEvents(from: LocalDate, to: LocalDate): List<CalendarEvent>
-
-    suspend fun getCalendarIds(): List<CalendarListEntryDto>
 }
