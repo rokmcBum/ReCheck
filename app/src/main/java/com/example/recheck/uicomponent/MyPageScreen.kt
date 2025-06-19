@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
 import com.example.recheck.viewmodel.FoodViewModel
@@ -92,9 +92,8 @@ fun MyPageScreen(
                         contentColor = Color.Black
                     )
                 ) {
-                    Text("+", fontWeight = FontWeight.Bold)
+                    Text("+", fontWeight = FontWeight.Bold, fontSize = 30.sp)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
                         userViewModel.clearUser()
@@ -148,17 +147,20 @@ fun MyPageScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // LazyColumn 전체 리스트
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(foodsState) { food ->
-                val dday =
-                    ChronoUnit.DAYS.between(
-                        today,
-                        LocalDate.parse(food.expirationDate.toString(), formatter)
-                    )
+            items(foodsState.sortedByDescending {
+                runCatching {
+                    LocalDate.parse(it.expirationDate.toString(), formatter)
+                }.getOrNull() ?: LocalDate.MAX
+            }) { food ->
+                val parsedDate = runCatching {
+                    LocalDate.parse(food.expirationDate.toString(), formatter)
+                }.getOrNull()
+
+                val dday = parsedDate?.let { ChronoUnit.DAYS.between(today, it) } ?: Long.MAX_VALUE
 
                 Box(
                     modifier = Modifier
@@ -202,6 +204,7 @@ fun MyPageScreen(
                 }
             }
         }
+
     }
 }
 
