@@ -98,6 +98,7 @@ fun MyPageScreen(
                 Button(
                     onClick = {
                         userViewModel.clearUser()
+                        foodViewModel.clearFoods()
                         navController.navigate(Routes.Login.route) {
                             popUpTo(0) { inclusive = true }
                         }
