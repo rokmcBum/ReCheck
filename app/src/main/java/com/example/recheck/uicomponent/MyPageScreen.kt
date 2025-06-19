@@ -51,24 +51,11 @@ fun MyPageScreen(
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val today = LocalDate.now()
+
     val mostUrgentFood = foodsState
-        .filter {
-            !it.isConsumed && runCatching {
-                LocalDate.parse(
-                    it.expirationDate,
-                    formatter
-                ) >= today
-            }.getOrDefault(false)
-        }
-        .minByOrNull {
-            runCatching {
-                ChronoUnit.DAYS.between(
-                    today,
-                    LocalDate.parse(it.expirationDate, formatter)
-                )
-            }
-                .getOrDefault(Long.MAX_VALUE)
-        }
+        .filter { !it.isConsumed && it.expirationDate >= today }
+        .minByOrNull { ChronoUnit.DAYS.between(today, it.expirationDate) }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -92,8 +79,8 @@ fun MyPageScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             mostUrgentFood?.let { food ->
-                val dday =
-                    ChronoUnit.DAYS.between(today, LocalDate.parse(food.expirationDate, formatter))
+                val dday = ChronoUnit.DAYS.between(today, food.expirationDate)
+
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -109,7 +96,7 @@ fun MyPageScreen(
                             color = Color.Red
                         )
                         Text(food.name, fontWeight = FontWeight.Bold)
-                        Text(food.expirationDate)
+                        Text(food.expirationDate.format(formatter))
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -131,7 +118,7 @@ fun MyPageScreen(
                         ) {
                             Column {
                                 Text("식재료 이름 : ${food.name}")
-                                Text("소비기한 : ${food.expirationDate}")
+                                Text("소비기한 : ${food.expirationDate.format(formatter)}")
                             }
                             Checkbox(
                                 checked = food.isConsumed,

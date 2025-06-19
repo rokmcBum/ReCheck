@@ -35,8 +35,11 @@ import androidx.navigation.NavController
 import com.example.recheck.model.Routes
 import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.viewmodel.FoodViewModel
+import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter.ISO_DATE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,12 +103,14 @@ fun AddFoodScreen(
                             snackbarHostState.showSnackbar("모든 항목을 입력해 주세요")
                         }
                     } else {
+                        val parsedDate: LocalDate = LocalDate.parse(expirationDate, ISO_DATE)
+
                         foodViewModel.insertFood(
                             FoodEntity(
-                                name = name.toString(),
-                                expirationDate = expirationDate.toString(),
-                                isConsumed = false,
-                                userId = user.id,
+                                name           = name,
+                                expirationDate = parsedDate,
+                                isConsumed     = false,
+                                userId         = user.id,
                             )
                         ) { success ->
                             if (success) {
