@@ -12,7 +12,7 @@ interface FoodDAO {
     @Insert
     suspend fun insertFood(foodEntity: FoodEntity)
 
-    @Query("UPDATE FoodTable SET isConsumed = true WHERE id = :id")
+    @Query("UPDATE FoodTable SET isConsumed = NOT isConsumed WHERE id = :id")
     suspend fun consumeFood(id: Int)
 
     @Delete
