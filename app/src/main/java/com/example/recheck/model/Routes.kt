@@ -8,4 +8,5 @@ sealed class Routes(val route: String) {
     data object Init : Routes("Init")
     data object AddFood : Routes("AddFood")
     data object Calendar : Routes("Calendar")
+    data object Welcome : Routes("Welcome")
 }

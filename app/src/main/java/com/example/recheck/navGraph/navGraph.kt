@@ -16,6 +16,7 @@ import com.example.recheck.model.Routes
 import com.example.recheck.uicomponent.InitScreen
 import com.example.recheck.uicomponent.LoginScreen
 import com.example.recheck.uicomponent.MyPageScreen
+import com.example.recheck.uicomponent.WelcomeScreen
 import com.example.recheck.viewmodel.FoodViewModel
 import com.example.recheck.viewmodel.UserViewModel
 
@@ -59,6 +60,9 @@ fun NavGraph(
         }
         composable(Routes.Main.route) {
             InitScreen(navController)
+        }
+        composable(Routes.Welcome.route) {
+            WelcomeScreen(navController)
         }
         composable(Routes.Calendar.route) {
             CalendarScreen(currentUserId = userViewModel.user.value.id)

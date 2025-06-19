@@ -99,7 +99,8 @@ fun RecheckApp() {
             if (currentRoute !in listOf(
                     Routes.Init.route,
                     Routes.Login.route,
-                    Routes.Register.route
+                    Routes.Register.route,
+                    Routes.Welcome.route,
                 )
             ) {
                 BottomBar(navController = navController)
