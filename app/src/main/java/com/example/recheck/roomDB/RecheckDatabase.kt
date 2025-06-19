@@ -1,4 +1,4 @@
-package com.example.week12.roomDB
+package com.example.recheck.roomDB
 
 import android.content.Context
 import androidx.room.Database

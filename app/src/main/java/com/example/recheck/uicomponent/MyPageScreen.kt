@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
 import com.example.recheck.viewmodel.FoodViewModel
-import com.example.week12.viewmodel.UserViewModel
+import com.example.recheck.viewmodel.UserViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -100,31 +102,37 @@ fun MyPageScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            foodsState.forEach { food ->
-                Column(
+            foodsState.forEach { _ ->
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text("식재료 이름 : ${food.name}")
-                            Text("소비기한 : ${food.expirationDate.format(formatter)}")
-                        }
-                        Checkbox(
-                            checked = food.isConsumed,
-                            onCheckedChange = {
-                                foodViewModel.consumeFood(
-                                    foodId = food.id,
-                                    userId = userState.id
-                                )
+                    items(foodsState) { food ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("식재료 이름 : ${food.name}")
+                                Text("소비기한 : ${food.expirationDate.format(formatter)}")
                             }
-                        )
+                            Checkbox(
+                                checked = food.isConsumed,
+                                onCheckedChange = {
+                                    foodViewModel.consumeFood(
+                                        foodId = food.id,
+                                        userId = userState.id
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
+
             }
         }
 

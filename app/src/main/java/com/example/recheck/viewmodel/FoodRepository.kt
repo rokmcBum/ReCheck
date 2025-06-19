@@ -1,7 +1,7 @@
 package com.example.recheck.viewmodel
 
 import com.example.recheck.roomDB.FoodEntity
-import com.example.week12.roomDB.RecheckDatabase
+import com.example.recheck.roomDB.RecheckDatabase
 
 class FoodRepository(private val db: RecheckDatabase) {
     val dao = db.getFoodDao()

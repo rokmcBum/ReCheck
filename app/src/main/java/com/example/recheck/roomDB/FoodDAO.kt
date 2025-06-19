@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import java.time.LocalDate
 
+
 @Dao
 interface FoodDAO {
     @Insert
