@@ -18,7 +18,7 @@ interface FoodDAO {
     @Delete
     suspend fun deleteFood(foodEntity: FoodEntity)
 
-    @Query("SELECT * FROM FoodTable WHERE userId = :userId")
+    @Query("SELECT * FROM FoodTable WHERE userId = :userId  AND length(expirationDate) = 10")
     suspend fun getMyFoods(userId: Int): List<FoodEntity>
 
     @Query("SELECT * FROM FoodTable WHERE expirationDate = :date")

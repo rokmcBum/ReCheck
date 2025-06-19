@@ -5,12 +5,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private val ISO_DATE = DateTimeFormatter.ISO_DATE  // "yyyy-MM-dd"
-
 fun FoodEntity.toDomainModel(): FoodItem {
     return FoodItem(
         id = this.id,
         name = this.name,
-        expirationDate = date,
+        expirationDate = LocalDate.parse(this.expirationDate.toString(), ISO_DATE),
         userId = this.userId,
         isConsumed = this.isConsumed
     )

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -51,110 +52,156 @@ fun MyPageScreen(
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val today = LocalDate.now()
-
     val mostUrgentFood = foodsState
-        .filter { !it.isConsumed && it.expirationDate >= today }
-        .minByOrNull { ChronoUnit.DAYS.between(today, it.expirationDate) }
-
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "내 식재료",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineSmall
+        .filter {
+            !it.isConsumed && runCatching {
+                LocalDate.parse(it.expirationDate.toString(), formatter) >= today
+            }.getOrDefault(false)
+        }
+        .minByOrNull {
+            runCatching {
+                ChronoUnit.DAYS.between(
+                    today,
+                    LocalDate.parse(it.expirationDate.toString(), formatter)
                 )
-                Button(onClick = {
-                    navController.navigate(Routes.AddFood.route)
-                }) {
+            }.getOrDefault(Long.MAX_VALUE)
+        }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // 상단: 제목 + 버튼들
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "내 식재료",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Row {
+                Button(
+                    onClick = { navController.navigate(Routes.AddFood.route) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Black
+                    )
+                ) {
                     Text("+", fontWeight = FontWeight.Bold)
                 }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        userViewModel.clearUser()
+                        navController.navigate(Routes.Login.route) {
+                            popUpTo(Routes.Mypage.route) { inclusive = true }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Text("로그아웃", fontWeight = FontWeight.Medium)
+                }
             }
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            mostUrgentFood?.let { food ->
-                val dday = ChronoUnit.DAYS.between(today, food.expirationDate)
+        // 가장 임박한 식재료 원형 표시
+        mostUrgentFood?.let { food ->
+            val dday =
+                ChronoUnit.DAYS.between(
+                    today,
+                    LocalDate.parse(food.expirationDate.toString(), formatter)
+                )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp)
+                    .size(220.dp)
+                    .border(2.dp, Color.LightGray, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = food.name,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = "${dday}일",
+                        color = Color(0xFFFF5D5D),
+                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text("남았어요!", color = Color.Gray)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // LazyColumn 전체 리스트
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(foodsState) { food ->
+                val dday =
+                    ChronoUnit.DAYS.between(
+                        today,
+                        LocalDate.parse(food.expirationDate.toString(), formatter)
+                    )
 
                 Box(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp)
-                        .size(160.dp)
-                        .border(4.dp, Color.Red, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "D-$dday",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.Red
-                        )
-                        Text(food.name, fontWeight = FontWeight.Bold)
-                        Text(food.expirationDate.format(formatter))
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            foodsState.forEach { _ ->
-                LazyColumn(
-                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .border(1.dp, Color(0xFFF5F5F5), shape = MaterialTheme.shapes.medium)
+                        .padding(16.dp)
                 ) {
-                    items(foodsState) { food ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text("식재료 이름 : ${food.name}")
-                                Text("소비기한 : ${food.expirationDate.format(formatter)}")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            if (dday > 0) {
+                                Text(
+                                    text = "D-${dday}",
+                                    color = Color(0xFFFF5D5D),
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
-                            Checkbox(
-                                checked = food.isConsumed,
-                                onCheckedChange = {
-                                    foodViewModel.consumeFood(
-                                        foodId = food.id,
-                                        userId = userState.id
-                                    )
-                                }
+                            Text(
+                                text = food.name,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "${food.expirationDate} 까지",
+                                color = Color.Gray
                             )
                         }
+
+                        Checkbox(
+                            checked = food.isConsumed,
+                            onCheckedChange = {
+                                foodViewModel.consumeFood(
+                                    foodId = food.id,
+                                    userId = userState.id
+                                )
+                            }
+                        )
                     }
                 }
-
             }
-        }
-
-        Button(
-            onClick = {
-                userViewModel.clearUser()
-                navController.navigate(Routes.Login.route) {
-                    popUpTo(Routes.Mypage.route) { inclusive = true }
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(24.dp)
-                .fillMaxWidth()
-                .height(60.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text("로그아웃", fontWeight = FontWeight.Bold)
         }
     }
 }
+

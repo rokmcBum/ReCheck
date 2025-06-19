@@ -35,7 +35,6 @@ import androidx.navigation.NavController
 import com.example.recheck.model.Routes
 import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.viewmodel.FoodViewModel
-import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -107,10 +106,10 @@ fun AddFoodScreen(
 
                         foodViewModel.insertFood(
                             FoodEntity(
-                                name           = name,
+                                name = name,
                                 expirationDate = parsedDate,
-                                isConsumed     = false,
-                                userId         = user.id,
+                                isConsumed = false,
+                                userId = user.id,
                             )
                         ) { success ->
                             if (success) {
