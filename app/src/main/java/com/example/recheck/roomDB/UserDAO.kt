@@ -20,4 +20,6 @@ interface UserDAO {
 
     @Query("SELECT * FROM UserTable WHERE email = :email AND password = :password")
     suspend fun getUser(email: String, password: String): UserEntity?
+
+
 }

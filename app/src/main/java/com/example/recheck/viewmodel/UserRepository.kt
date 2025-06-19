@@ -1,5 +1,6 @@
 package com.example.recheck.viewmodel
 
+import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.roomDB.RecheckDatabase
 import com.example.recheck.roomDB.UserEntity
 
@@ -21,4 +22,6 @@ class UserRepository(private val db: RecheckDatabase) {
     suspend fun getUser(email: String, password: String): UserEntity? {
         return dao.getUser(email, password)
     }
+
+
 }

@@ -19,6 +19,8 @@ import com.example.recheck.uicomponent.MyPageScreen
 import com.example.recheck.uicomponent.WelcomeScreen
 import com.example.recheck.viewmodel.FoodViewModel
 import androidx.compose.runtime.getValue
+import com.example.recheck.uicomponent.HistoryScreen
+import com.example.recheck.uicomponent.ShareScreen
 import com.example.recheck.uicomponent.permissions.NotificationSettingsScreen
 import com.example.recheck.viewmodel.UserViewModel
 
@@ -88,6 +90,18 @@ fun NavGraph(
         }
         composable(Routes.Notification.route) {
             NotificationSettingsScreen(navController)
+        }
+        composable(Routes.Share.route) {
+            ShareScreen(userViewModel = userViewModel,
+                foodViewModel = foodViewModel,
+                navController = navController
+            )
+        }
+        composable(Routes.History.route) {
+            HistoryScreen(userViewModel = userViewModel,
+                foodViewModel = foodViewModel,
+                navController = navController
+            )
         }
     }
 }

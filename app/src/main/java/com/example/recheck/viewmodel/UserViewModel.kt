@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.recheck.roomDB.FoodEntity
 import com.example.recheck.roomDB.UserEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -73,4 +74,6 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         val current = _user.value
         return current.name.isNotEmpty() && current.email.isNotEmpty()
     }
+
+
 }

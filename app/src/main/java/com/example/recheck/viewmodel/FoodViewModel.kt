@@ -57,7 +57,16 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
         }
     }
 
+
     fun clearFoods() {
         _foods.value = emptyList()
     }
+
+    fun getFoodsByUserId(userId: Int, onResult: (List<FoodEntity>) -> Unit) {
+        viewModelScope.launch {
+            val foods = repository.getFoodsByUserId(userId)
+            onResult(foods)
+        }
+    }
+
 }
