@@ -1,6 +1,6 @@
 package com.example.recheck.model
 
-import okhttp3.Route
+//import okhttp3.Route
 
 sealed class Routes(val route: String) {
     data object Main : Routes("Main")
@@ -12,4 +12,6 @@ sealed class Routes(val route: String) {
     data object Calendar : Routes("Calendar")
     data object Notification : Routes("NotificationSettings")
     data object Welcome : Routes("Welcome")
+    data object Share : Routes("Share")
+    data object History : Routes("History")
 }

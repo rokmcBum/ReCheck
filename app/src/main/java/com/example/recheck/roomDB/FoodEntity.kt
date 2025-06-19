@@ -13,4 +13,7 @@ data class FoodEntity(
     var expirationDate: LocalDate,
     var userId: Int,
     var isConsumed: Boolean,
+    var ConsumeCount: Int = 0,
+
+    var sharedWith: List<Int> = emptyList(),
 )

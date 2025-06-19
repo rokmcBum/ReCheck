@@ -12,8 +12,8 @@ interface FoodDAO {
     @Insert
     suspend fun insertFood(foodEntity: FoodEntity)
 
-    @Query("UPDATE FoodTable SET isConsumed = NOT isConsumed WHERE id = :id")
-    suspend fun consumeFood(id: Int)
+    //@Query("UPDATE FoodTable SET isConsumed = NOT isConsumed WHERE id = :id")
+    //suspend fun consumeFood(id: Int)
 
     @Delete
     suspend fun deleteFood(foodEntity: FoodEntity)
@@ -23,4 +23,15 @@ interface FoodDAO {
 
     @Query("SELECT * FROM FoodTable WHERE expirationDate = :date")
     suspend fun findItemsByExpirationDate(date: LocalDate): List<FoodEntity>
+
+    @Query("""
+        UPDATE FoodTable
+        SET isConsumed = NOT isConsumed , consumeCount = consumeCount + 1
+        WHERE id = :id
+    """)
+    suspend fun consumeFood(id: Int)
+
+    @Query("SELECT * FROM FoodTable WHERE userId = :userId")
+    suspend fun getFoodsByUserId(userId: Int): List<FoodEntity>
+
 }

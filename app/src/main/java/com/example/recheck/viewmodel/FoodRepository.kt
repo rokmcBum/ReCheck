@@ -5,6 +5,7 @@ import com.example.recheck.roomDB.RecheckDatabase
 
 class FoodRepository(private val db: RecheckDatabase) {
     val dao = db.getFoodDao()
+
     suspend fun insertFood(foodEntity: FoodEntity) {
         dao.insertFood(foodEntity)
     }
@@ -19,5 +20,9 @@ class FoodRepository(private val db: RecheckDatabase) {
 
     suspend fun getMyFoods(userId: Int): List<FoodEntity> {
         return dao.getMyFoods(userId)
+    }
+
+    suspend fun getFoodsByUserId(userId: Int): List<FoodEntity> {
+        return dao.getFoodsByUserId(userId)
     }
 }
