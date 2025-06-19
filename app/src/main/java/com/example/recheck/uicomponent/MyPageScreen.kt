@@ -99,7 +99,7 @@ fun MyPageScreen(
                     onClick = {
                         userViewModel.clearUser()
                         navController.navigate(Routes.Login.route) {
-                            popUpTo(Routes.Mypage.route) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
