@@ -198,6 +198,16 @@ fun MyPageScreen(
                                 color = Color.Gray
                             )
                         }
+                        Button(
+                            onClick = {
+                                navController.navigate("${Routes.Recipes.route}/${food.name}")
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFFF5D5D),
+                                contentColor = Color.White)
+                        ) {
+                            Text("요리 추천")
+                        }
 
                         Checkbox(
                             checked = food.isConsumed,

@@ -54,6 +54,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("androidx.room:room-runtime:2.5.0")
+    implementation(libs.jsoup)
     ksp("androidx.room:room-compiler:2.5.0")
     implementation ("androidx.work:work-runtime-ktx:2.8.1")
     implementation(libs.androidx.core.ktx)

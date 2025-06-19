@@ -19,7 +19,10 @@ import com.example.recheck.uicomponent.MyPageScreen
 import com.example.recheck.uicomponent.WelcomeScreen
 import com.example.recheck.viewmodel.FoodViewModel
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.recheck.uicomponent.HistoryScreen
+import com.example.recheck.uicomponent.RecipeScreen
 import com.example.recheck.uicomponent.ShareScreen
 import com.example.recheck.uicomponent.permissions.NotificationSettingsScreen
 import com.example.recheck.viewmodel.UserViewModel
@@ -103,5 +106,20 @@ fun NavGraph(
                 navController = navController
             )
         }
+//        composable(Routes.Recipes.route) { backStackEntry ->
+//            val ingredient = backStackEntry.arguments?.getString("ingredient") ?: ""
+//            RecipeScreen(ingredient, foodViewModel, navController)
+//        }
+        composable(
+            route = "${Routes.Recipes.route}/{ingredient}",
+            arguments = listOf(navArgument("ingredient") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ingredient = backStackEntry.arguments?.getString("ingredient") ?: ""
+            RecipeScreen(
+                ingredient = ingredient,
+                navController = navController
+            )
+        }
+
     }
 }

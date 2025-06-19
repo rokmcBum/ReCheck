@@ -22,6 +22,9 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
     private var _foods = MutableStateFlow<List<FoodEntity>>(emptyList())
     val foods = _foods.asStateFlow()
 
+    val _recipes = MutableStateFlow<List<String>>(emptyList())
+    val recipes = _recipes.asStateFlow()
+
     fun getMyFoods(userId: Int) {
         viewModelScope.launch {
             val foods = repository.getMyFoods(userId)
@@ -66,6 +69,16 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
         viewModelScope.launch {
             val foods = repository.getFoodsByUserId(userId)
             onResult(foods)
+        }
+    }
+    fun getRecipesByIngredient(ingredient: String) {
+        viewModelScope.launch {
+            try {
+                //val response = apiService.getRecipes(ingredient, API_KEY)
+                //_recipes.value = response.results.map { it.title }
+            } catch (e: Exception) {
+                _recipes.value = listOf("요리 추천 실패: ${e.message}")
+            }
         }
     }
 
