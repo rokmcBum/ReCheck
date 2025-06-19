@@ -149,6 +149,9 @@ fun MyPageScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (foodsState.isEmpty()) {
+            Text("식재료를 등록해 주세요", color = Color.Gray)
+        }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
