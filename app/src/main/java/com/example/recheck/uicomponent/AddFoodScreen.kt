@@ -4,23 +4,29 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,9 +34,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
 import com.example.recheck.roomDB.FoodEntity
@@ -57,28 +67,85 @@ fun AddFoodScreen(
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(
+                    onClick = {
+                        if (name.isBlank() || expirationDate.isBlank()) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("모든 항목을 입력해 주세요")
+                            }
+                        } else {
+                            val parsedDate: LocalDate = LocalDate.parse(expirationDate, ISO_DATE)
+
+                            foodViewModel.insertFood(
+                                FoodEntity(
+                                    name = name,
+                                    expirationDate = parsedDate,
+                                    isConsumed = false,
+                                    userId = user.id,
+                                )
+                            ) { success ->
+                                if (success) {
+                                    navController.navigate(Routes.Mypage.route) {
+                                        popUpTo(Routes.AddFood.route) { inclusive = true }
+                                    }
+                                } else {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("이미 존재하는 이메일입니다")
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5D5D)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("등록하기", color = Color.White)
+                }
+            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
         ) {
-            TopAppBar(
-                title = { Text("식재료 등록하기") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { navController.popBackStack() }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "식재료 등록하기",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(32.dp))
 
             // 이름 입력
-            OutlinedTextField(
+            TextField(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text("식재료 이름 입력") },
@@ -93,41 +160,6 @@ fun AddFoodScreen(
                 onDateSelected = { expirationDate = it }
             )
             Spacer(modifier = Modifier.height(32.dp))
-
-            // 등록 버튼
-            Button(
-                onClick = {
-                    if (name.isBlank() || expirationDate.isBlank()) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("모든 항목을 입력해 주세요")
-                        }
-                    } else {
-                        val parsedDate: LocalDate = LocalDate.parse(expirationDate, ISO_DATE)
-
-                        foodViewModel.insertFood(
-                            FoodEntity(
-                                name = name,
-                                expirationDate = parsedDate,
-                                isConsumed = false,
-                                userId = user.id,
-                            )
-                        ) { success ->
-                            if (success) {
-                                navController.navigate(Routes.Mypage.route) {
-                                    popUpTo(Routes.AddFood.route) { inclusive = true }
-                                }
-                            } else {
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("이미 존재하는 이메일입니다")
-                                }
-                            }
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("등록 버튼")
-            }
         }
     }
 }
