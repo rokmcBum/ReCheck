@@ -43,7 +43,6 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     userViewModel: UserViewModel,
     navController: NavController,
-    onGoogleSignIn: () -> Unit
 ) {
     val user by userViewModel.user.collectAsState()
 

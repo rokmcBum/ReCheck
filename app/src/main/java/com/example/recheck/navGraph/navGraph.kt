@@ -10,21 +10,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.recheck.calendar.ui.CalendarScreen
 import com.example.recheck.model.Routes
+import com.example.recheck.uicomponent.HistoryScreen
 import com.example.recheck.uicomponent.InitScreen
 import com.example.recheck.uicomponent.MyPageScreen
-import com.example.recheck.uicomponent.WelcomeScreen
-import com.example.recheck.viewmodel.FoodViewModel
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.example.recheck.uicomponent.HistoryScreen
 import com.example.recheck.uicomponent.RecipeScreen
 import com.example.recheck.uicomponent.ShareScreen
+import com.example.recheck.uicomponent.WelcomeScreen
 import com.example.recheck.uicomponent.permissions.NotificationSettingsScreen
+import com.example.recheck.viewmodel.FoodViewModel
 import com.example.recheck.viewmodel.UserViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -33,7 +32,6 @@ fun NavGraph(
     navController: NavHostController,
     userViewModel: UserViewModel,
     foodViewModel: FoodViewModel,
-    onGoogleSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -59,7 +57,6 @@ fun NavGraph(
             LoginScreen(
                 userViewModel = userViewModel,
                 navController = navController,
-                onGoogleSignIn = onGoogleSignIn
             )
         }
         composable(Routes.Register.route) {
@@ -95,13 +92,15 @@ fun NavGraph(
             NotificationSettingsScreen(navController)
         }
         composable(Routes.Share.route) {
-            ShareScreen(userViewModel = userViewModel,
+            ShareScreen(
+                userViewModel = userViewModel,
                 foodViewModel = foodViewModel,
                 navController = navController
             )
         }
         composable(Routes.History.route) {
-            HistoryScreen(userViewModel = userViewModel,
+            HistoryScreen(
+                userViewModel = userViewModel,
                 foodViewModel = foodViewModel,
                 navController = navController
             )
