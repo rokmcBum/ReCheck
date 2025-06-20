@@ -1,9 +1,12 @@
 package com.example.recheck.uicomponent
 
+import android.R.attr.text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +15,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,12 +33,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.recheck.model.Routes
+import com.example.recheck.ui.theme.Pretendard
 import com.example.recheck.viewmodel.FoodViewModel
 import com.example.recheck.viewmodel.UserViewModel
 import java.time.LocalDate
@@ -71,11 +82,15 @@ fun MyPageScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(color = Color(0xFFFAFAFA))
     ) {
         // 상단: 제목 + 버튼들
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(color = Color(0xFFFFFFFF))
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -113,7 +128,7 @@ fun MyPageScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(70.dp))
 
         // 가장 임박한 식재료 원형 표시
         mostUrgentFood?.let { food ->
@@ -125,35 +140,66 @@ fun MyPageScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(16.dp)
                     .size(220.dp)
-                    .border(2.dp, Color.LightGray, CircleShape),
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = CircleShape
+                    )
+                    .border(2.dp, Color(0xFFF1F1F1), CircleShape)
+                    .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = food.name,
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Row(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .wrapContentHeight()
+                            .background(color = Color(0xFFF5F5F5), shape = RoundedCornerShape(4.dp))
+                            .padding(horizontal = 4.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            10.dp,
+                            Alignment.CenterHorizontally
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = food.name,
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontFamily = Pretendard,
+                                fontWeight = FontWeight.Normal,
+                                color = Color(0xFF2C2C2C),
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         text = "${dday}일",
                         color = Color(0xFFFF5D5D),
                         fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                         fontWeight = FontWeight.Bold
                     )
-                    Text("남았어요!", color = Color.Gray)
+                    Text(
+                        "남았어요!",
+                        color = Color.Gray,
+                        fontSize = 18.sp,
+                        fontFamily = Pretendard,
+                        fontWeight = FontWeight(600)
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(60.dp))
 
         if (foodsState.isEmpty()) {
             Text("식재료를 등록해 주세요", color = Color.Gray)
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(foodsState.sortedByDescending {
@@ -170,59 +216,98 @@ fun MyPageScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(color = Color(0xFFFFFFFF))
                         .border(1.dp, Color(0xFFF5F5F5), shape = MaterialTheme.shapes.medium)
                         .padding(16.dp)
+                        .shadow(elevation = 8.dp, spotColor = Color(0x08000000), ambientColor = Color(0x08000000))
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Row {
+                        Row {
+                            Column (
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .wrapContentHeight()
+                            ) {
                                 if (dday > 0) {
-                                    Text(
-                                        text = "D-${dday}",
-                                        color = Color(0xFFFF5D5D),
-                                        fontWeight = FontWeight.SemiBold
-                                    )
+                                    Row(modifier = Modifier,
+                                        verticalAlignment   = Alignment.CenterVertically){
+                                        Column(
+                                            modifier = Modifier
+                                                .wrapContentWidth()
+                                                .wrapContentHeight()
+                                                .background(
+                                                    color = Color(0xFFF5F5F5),
+                                                    shape = RoundedCornerShape(4.dp)
+                                                )
+                                                .padding(4.dp),
+                                        ) {
+                                            Text(
+                                                text = "D-${dday}",
+                                                color = Color(0xFFFF5D5D),
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text(
+                                            text = food.name,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = food.name,
-                                    fontWeight = FontWeight.Bold
+                                    text = "${food.expirationDate} 까지",
+                                    color = Color.Gray
                                 )
                             }
-                            Text(
-                                text = "${food.expirationDate} 까지",
-                                color = Color.Gray
+                            Button(
+                                onClick = {
+                                    navController.navigate("${Routes.Recipes.route}/${food.name}")
+                                },
+                                modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color(0xFFFF5D5D),
+                                        shape = RoundedCornerShape(20.dp)
+                                    ),
+                                contentPadding = PaddingValues(
+                                    horizontal = 8.dp,   // 좌우 여백
+//                                    vertical   = 4.dp    // 상하 여백
+                                ),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color(0xFFFF5D5D)
+                                )
+                            ) {
+                                Text("요리 추천")
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Checkbox(
+                                checked = food.isConsumed,
+                                onCheckedChange = {
+                                    foodViewModel.consumeFood(
+                                        foodId = food.id,
+                                        userId = userState.id
+                                    )
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor            = Color(0xFFFF5D5D),  // 체크된 박스 배경
+                                    uncheckedColor          = Color(0xFFF1F1F1),    // 언체크 박스 테두리
+                                    checkmarkColor          = Color.White,        // 체크마크 색
+                                )
                             )
                         }
-                        Button(
-                            onClick = {
-                                navController.navigate("${Routes.Recipes.route}/${food.name}")
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFFF5D5D),
-                                contentColor = Color.White)
-                        ) {
-                            Text("요리 추천")
-                        }
-
-                        Checkbox(
-                            checked = food.isConsumed,
-                            onCheckedChange = {
-                                foodViewModel.consumeFood(
-                                    foodId = food.id,
-                                    userId = userState.id
-                                )
-                            }
-                        )
                     }
                 }
             }
         }
-
     }
 }
 
