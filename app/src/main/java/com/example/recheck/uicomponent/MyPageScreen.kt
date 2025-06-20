@@ -1,6 +1,5 @@
 package com.example.recheck.uicomponent
 
-import android.R.attr.text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -127,7 +126,11 @@ fun MyPageScreen(
                 }
             }
         }
-
+        if (foodsState.isEmpty()) {
+            Row(modifier = Modifier.padding(30.dp)) {
+                Text("식재료를 등록해 주세요", color = Color.Gray)
+            }
+        }
         Spacer(modifier = Modifier.height(70.dp))
 
         // 가장 임박한 식재료 원형 표시
@@ -195,11 +198,10 @@ fun MyPageScreen(
 
         Spacer(modifier = Modifier.height(60.dp))
 
-        if (foodsState.isEmpty()) {
-            Text("식재료를 등록해 주세요", color = Color.Gray)
-        }
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(foodsState.sortedByDescending {
@@ -219,7 +221,11 @@ fun MyPageScreen(
                         .background(color = Color(0xFFFFFFFF))
                         .border(1.dp, Color(0xFFF5F5F5), shape = MaterialTheme.shapes.medium)
                         .padding(16.dp)
-                        .shadow(elevation = 8.dp, spotColor = Color(0x08000000), ambientColor = Color(0x08000000))
+                        .shadow(
+                            elevation = 8.dp,
+                            spotColor = Color(0x08000000),
+                            ambientColor = Color(0x08000000)
+                        )
                 ) {
                     Row(
                         modifier = Modifier
@@ -228,15 +234,17 @@ fun MyPageScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row {
-                            Column (
+                            Column(
                                 modifier = Modifier
                                     .weight(1f)
                                     .wrapContentHeight(),
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 if (dday > 0) {
-                                    Row(modifier = Modifier,
-                                        verticalAlignment   = Alignment.CenterVertically){
+                                    Row(
+                                        modifier = Modifier,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Column(
                                             modifier = Modifier
                                                 .wrapContentWidth()
@@ -299,9 +307,9 @@ fun MyPageScreen(
                                     )
                                 },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor            = Color(0xFFFF5D5D),  // 체크된 박스 배경
-                                    uncheckedColor          = Color(0xFFF1F1F1),    // 언체크 박스 테두리
-                                    checkmarkColor          = Color.White,        // 체크마크 색
+                                    checkedColor = Color(0xFFFF5D5D),  // 체크된 박스 배경
+                                    uncheckedColor = Color(0xFFF1F1F1),    // 언체크 박스 테두리
+                                    checkmarkColor = Color.White,        // 체크마크 색
                                 )
                             )
                         }
