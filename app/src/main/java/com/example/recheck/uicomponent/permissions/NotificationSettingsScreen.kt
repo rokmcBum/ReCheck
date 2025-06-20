@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -97,7 +98,13 @@ fun NotificationSettingsScreen(
                             prefs.edit().putBoolean("notifications_enabled", false).apply()
                             NotificationScheduler.cancelDailyCheck(context)
                         }
-                    }
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor   = Color(0xFFFF5D5D),                   // on일 때 손가락 닿는 부분
+                        checkedTrackColor   = Color(0xFFFF5D5D).copy(alpha = 0.5f),// on일 때 트랙
+                        uncheckedThumbColor = Color(0xFF656565),                          // off일 때 손가락
+                        uncheckedTrackColor = Color(0xFF656565).copy(alpha = 0.3f)        // off일 때 트랙
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
