@@ -33,7 +33,7 @@ fun CalendarComposable(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(16.dp),
         verticalAlignment   = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -64,7 +64,10 @@ fun CalendarComposable(
     val daysInMonth  = currentMonth.lengthOfMonth()
 
     // 1) 요일 헤더
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween) {
         listOf("일","월","화","수","목","금","토").forEachIndexed { idx, dow ->
             val color = when (idx) {
                 0    -> Color(0xFFFF5D5D)
@@ -81,9 +84,13 @@ fun CalendarComposable(
         }
     }
 
+//    Spacer(modifier = Modifier.height(12.dp))
+
     // 2) 날짜 그리드
     var dayCounter = 1
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)) {
         repeat(6) { week ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 repeat(7) { dow ->
