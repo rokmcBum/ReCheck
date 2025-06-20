@@ -41,56 +41,18 @@ class CalendarViewModel(
             val byDate: Map<LocalDate, List<FoodItem>> =
                 items.groupBy { it.expirationDate }
 
-            // ④ 원격 이벤트도 같이 가져오기
-            val today     = LocalDate.now()
-            val weekLater = today.plusDays(7)
-            val events    = repository.fetchRemoteCalendarEvents(today, weekLater)
-
-            // ⑤ 상태 업데이트
+            // ④ 상태 업데이트 (원격 이벤트 없이)
             _uiState.value = CalendarScreenState(
-                markedDates   = dates,
-                selectedDate  = today,
-                itemsByDate   = byDate,
-                remoteEvents  = events,
-                isLoading     = false,
-                errorMessage  = null
+                markedDates  = dates,
+                selectedDate = LocalDate.now(),
+                itemsByDate  = byDate,
+                isLoading    = false,
+                errorMessage = null
             )
         }
     }
 
     fun onDateSelected(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
-    }
-
-    fun loadEventsForMonth(month: LocalDate) {
-        viewModelScope.launch {
-            // 로딩 표시
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
-            try {
-                // 월의 1일과 마지막 날 계산
-                val startOfMonth = month.withDayOfMonth(1)
-                val endOfMonth   = month.withDayOfMonth(month.lengthOfMonth())
-
-                // Repository에서 해당 월 이벤트만 가져오기
-                val events = repository.fetchRemoteCalendarEvents(startOfMonth, endOfMonth)
-
-                // 상태에 반영
-                _uiState.update {
-                    it.copy(
-                        remoteEvents = events,
-                        isLoading    = false
-                    )
-                }
-            } catch (e: Exception) {
-                // 에러 처리
-                _uiState.update {
-                    it.copy(
-                        errorMessage = e.localizedMessage ?: "이벤트 로드 실패",
-                        isLoading    = false
-                    )
-                }
-            }
-        }
     }
 }
