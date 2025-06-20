@@ -231,7 +231,8 @@ fun MyPageScreen(
                             Column (
                                 modifier = Modifier
                                     .weight(1f)
-                                    .wrapContentHeight()
+                                    .wrapContentHeight(),
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 if (dday > 0) {
                                     Row(modifier = Modifier,
